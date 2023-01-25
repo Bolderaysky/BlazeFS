@@ -47,7 +47,7 @@ class vfs {
         bool readArchive(std::uint8_t *buf) noexcept;
 
         // Read content of file from virtual filesystem
-        template <typename T> T readFile(const std::string &filename) noexcept;
+        template <typename T> T read(const std::string &filename) noexcept;
         // Check if certain file or directory exists
         bool exists(const std::string &filename) noexcept;
         // Remove file or directory from virtual filesystem
@@ -59,16 +59,19 @@ class vfs {
 
         // write 'value' into 'filename'
         template <typename T>
-        bool writeFile(const std::string &filename, const T &value) noexcept;
+        bool write(const std::string &filename, const T &value) noexcept;
 
         // Change current directory
         bool cd(const std::string &path) noexcept;
         // Create new directory
         bool createDir(const std::string &dirname) noexcept;
 
+        // Create link from one directory to another. Directory 'path_from' will
+        // point to the directory 'path_to'
         bool createSymlink(const std::string &path_from,
                            const std::string &path_to) noexcept;
 
+        // Check if certain file is directory or not
         bool isDirectory(const std::string &dirname) noexcept;
 };
 
@@ -80,7 +83,7 @@ class vfs {
 */
 
 template <typename T>
-bool vfs::writeFile(const std::string &filename, const T &value) noexcept {
+bool vfs::write(const std::string &filename, const T &value) noexcept {
 
     if (filename.length() == 0) return false;
 
@@ -99,6 +102,11 @@ bool vfs::writeFile(const std::string &filename, const T &value) noexcept {
             tmp->insert(fs_pair(parsedPath->at(i), value));
             return true;
 
+        } else if (it != tmp->end() && (i + 1) == parsedPath->size()) {
+
+            it->second = value;
+            return true;
+
         } else if (it != tmp->end())
             tmp = std::any_cast<std::shared_ptr<fs_map>>(it->second);
         else break;
@@ -107,7 +115,7 @@ bool vfs::writeFile(const std::string &filename, const T &value) noexcept {
     return false;
 }
 
-template <typename T> T vfs::readFile(const std::string &filename) noexcept {
+template <typename T> T vfs::read(const std::string &filename) noexcept {
 
     if (filename.length() == 0) return "";
 
