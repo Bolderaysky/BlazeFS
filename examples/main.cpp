@@ -1,27 +1,30 @@
 #include <iostream>
+#include <string>
 #include "vfs.hpp"
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
 
+    // Creating filesystem object
     vfs filesystem;
 
-    filesystem.createDir("directory/");
-    filesystem.createDir("dir2/");
-    filesystem.writeFile("/testfile1", std::string("Hello World"));
-    filesystem.writeFile("/dir2/testfile2", std::string("Hello World"));
+    // String that we will write to the file
+    std::string myStr = "Hello World from Virtual filesystem!";
 
-    filesystem.cd("directory/");
+    // Writing into `/file`. / is considered as root node like in linux/unix
+    // filesystems. Filesystem also accepts usage of not absolute path
+    //
+    // filesystem.write("./file", myStr);
+    //
+    // filesystem.write("file", myStr);
+    filesystem.write("/file", myStr);
 
-    std::string val = filesystem.readFile<std::string>("../testfile1");
-    std::cout << val << '\n';
+    // By default, current directory is root directory, so there's no need to
+    // specify root node. Also, we can use something like './'
+    //
+    // std::cout << filesystem.read<std::string>("./file");
 
-    filesystem.remove("/dir2/testfile2");
+    std::cout << filesystem.read<std::string>("file") << std::endl;
 
-    std::cout << filesystem.exists("/dir2/testfile2") << '\n';
-
-    auto dirList = filesystem.listDir("/dir2/../directory/");
-
-    for (const auto& entry : *dirList) std::cout << entry << '\n';
 
     return 0;
 }
