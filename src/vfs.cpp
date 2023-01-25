@@ -35,34 +35,6 @@ void vfs::unpackFiles(rapidjson::Value &object,
     }
 }
 
-bool vfs::readArchive(const std::string &filename) noexcept {
-
-    m_ifsInputFile.open(filename, std::ios::binary);
-    if (!m_ifsInputFile) { return false; }
-
-    char sizeBuf[8];
-    m_ifsInputFile.read(sizeBuf, 8);
-    uint32_t uSize = *(uint32_t *)(sizeBuf + 4) - 8;
-
-    m_headerSize = uSize + 16;
-    char *headerBuf = new char[uSize + 1];
-    m_ifsInputFile.seekg(16);
-    m_ifsInputFile.read(headerBuf, uSize);
-    headerBuf[uSize] = 0;
-
-    rapidjson::Document json;
-    rapidjson::ParseResult res = json.Parse(headerBuf);
-    if (!res) { return false; }
-
-    unpackFiles(json["files"]);
-    m_szOffset = 0;
-
-    m_ifsInputFile.close();
-
-    delete[] headerBuf;
-
-    return true;
-}
 
 void vfs::unpackFilesMem(rapidjson::Value &object, std::uint8_t *buf,
                          const std::string &sPath) noexcept {
@@ -95,11 +67,33 @@ void vfs::unpackFilesMem(rapidjson::Value &object, std::uint8_t *buf,
     }
 }
 
-vfs::vfs() noexcept {
+bool vfs::readArchive(const std::string &filename) noexcept {
 
-    vfs_ptr->insert(fs_pair(self, vfs_ptr));
-    vfs_ptr->insert(fs_pair(prev, vfs_ptr));
-    cur_dir = vfs_ptr;
+    m_ifsInputFile.open(filename, std::ios::binary);
+    if (!m_ifsInputFile) { return false; }
+
+    char sizeBuf[8];
+    m_ifsInputFile.read(sizeBuf, 8);
+    uint32_t uSize = *(uint32_t *)(sizeBuf + 4) - 8;
+
+    m_headerSize = uSize + 16;
+    char *headerBuf = new char[uSize + 1];
+    m_ifsInputFile.seekg(16);
+    m_ifsInputFile.read(headerBuf, uSize);
+    headerBuf[uSize] = 0;
+
+    rapidjson::Document json;
+    rapidjson::ParseResult res = json.Parse(headerBuf);
+    if (!res) { return false; }
+
+    unpackFiles(json["files"]);
+    m_szOffset = 0;
+
+    m_ifsInputFile.close();
+
+    delete[] headerBuf;
+
+    return true;
 }
 
 bool vfs::readArchive(std::uint8_t *buf) noexcept {
@@ -123,6 +117,13 @@ bool vfs::readArchive(std::uint8_t *buf) noexcept {
     delete[] headerBuf;
 
     return true;
+}
+
+vfs::vfs() noexcept {
+
+    vfs_ptr->insert(fs_pair(self, vfs_ptr));
+    vfs_ptr->insert(fs_pair(prev, vfs_ptr));
+    cur_dir = vfs_ptr;
 }
 
 std::unique_ptr<std::vector<std::string>>
@@ -289,14 +290,78 @@ std::unique_ptr<std::vector<std::string>>
 
 bool vfs::createSymlink(const std::string &path_from,
                         const std::string &path_to) noexcept {
+
+    if (path_from.length() == 0) return false;
+    if (path_to.length() == 0) return false;
+
+    std::shared_ptr<fs_map> from = std::make_shared<fs_map>();
+    std::shared_ptr<fs_map> to = std::make_shared<fs_map>();
+
+    if (path_from[0] == DIR_SEPARATOR) from = vfs_ptr;
+    else from = cur_dir;
+
+    if (path_to[0] == DIR_SEPARATOR) to = vfs_ptr;
+    else to = cur_dir;
+
+    auto parsedPathFrom = this->parsePath(path_from);
+    auto parsedPathTo = this->parsePath(path_to);
+
+    for (auto &entry : *parsedPathTo) {
+
+        auto it = to->find(entry);
+        if (it != to->end()) {
+
+            to = std::any_cast<std::shared_ptr<fs_map>>(it->second);
+        } else return false;
+    }
+
+    for (std::uint64_t i = 0; i < parsedPathFrom->size(); ++i) {
+
+        auto it = from->find(parsedPathFrom->at(i));
+        if (it == from->end() && (i + 1) == parsedPathFrom->size()) {
+
+            if (parsedPathFrom->at(i)[parsedPathFrom->at(i).length() - 1] !=
+                DIR_SEPARATOR)
+                return false;
+
+            from->insert(fs_pair(parsedPathFrom->at(i), to));
+            return true;
+
+        } else if (it != from->end())
+            from = std::any_cast<std::shared_ptr<fs_map>>(it->second);
+        else break;
+    }
+
+    return false;
 }
 
-/*
+bool vfs::isDirectory(const std::string &dirname) noexcept {
 
-        bool createSymlink(const std::string &path_from,
-                           const std::string &path_to) noexcept;
+    if (dirname.length() == 0) return false;
 
-        bool isDirectory(const std::string &dirname) noexcept;
-};
+    std::shared_ptr<fs_map> tmp = std::make_shared<fs_map>();
 
-*/
+    if (dirname[0] == DIR_SEPARATOR) tmp = vfs_ptr;
+    else tmp = cur_dir;
+
+    auto parsedPath = this->parsePath(dirname);
+
+    for (std::uint64_t i = 0; i < parsedPath->size(); ++i) {
+
+        auto it = tmp->find(parsedPath->at(i));
+        if (it != tmp->end()) {
+
+            if (i + 1 == parsedPath->size()) {
+
+                if (parsedPath->at(i)[parsedPath->at(i).length() - 1] ==
+                    DIR_SEPARATOR)
+                    return true;
+                return false;
+            }
+
+            tmp = std::any_cast<std::shared_ptr<fs_map>>(it->second);
+        } else return false;
+    }
+
+    return true;
+}
