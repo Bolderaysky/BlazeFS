@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: windows-latest
+        os: [windows-latest]
         include:
           - os: windows-latest
             compiler: cl
