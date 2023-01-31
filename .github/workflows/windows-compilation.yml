@@ -1,0 +1,39 @@
+name: windows-build
+
+on:
+  push:
+    branches: [main]
+
+  pull_request:
+    branches: [main]
+
+  workflow_dispatch:
+
+jobs:
+  build_and_test:
+    name: Build vfs on ${{ matrix.os }} with ${{ matrix.compiler }}.
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: windows-latest
+        include:
+          - os: windows-latest
+            compiler: cl
+            target: Windows
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+
+      - name: Use MSVC Developer command line
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Configure (Windows and Linux)
+        run: mkdir build && cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
+
+      - name: Compile a release build of overload.js (Windows)
+        run: msbuild build\vfs.sln -m /property:Configuration=Release
