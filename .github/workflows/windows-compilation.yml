@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: windows-latest
+        os: [windows-latest]
         include:
           - os: windows-latest
             compiler: cl
@@ -32,8 +32,8 @@ jobs:
       - name: Use MSVC Developer command line
         uses: ilammy/msvc-dev-cmd@v1
 
-      - name: Configure (Windows and Linux)
+      - name: Configure
         run: mkdir build && cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
 
-      - name: Compile a release build of overload.js (Windows)
-        run: msbuild build\vfs.sln -m /property:Configuration=Release
+      - name: Compile a release build of BlazeFS
+        run: msbuild build\blazefs.sln -m /property:Configuration=Release

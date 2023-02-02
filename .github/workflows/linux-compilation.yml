@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ubuntu-latest
+        os: [ubuntu-latest]
         include:
           - os: ubuntu-latest
             compiler: g++-latest
@@ -30,7 +30,7 @@ jobs:
       - name: Configure
         run: mkdir build && cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
 
-      - name: Compile a release build of vfs
+      - name: Compile a release build of BlazeFS
         run: make -C build/ -j4
 
 

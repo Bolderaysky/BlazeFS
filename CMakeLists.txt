@@ -22,8 +22,13 @@ if(EXISTS "${LOC_PATH}")
     message(FATAL_ERROR "You cannot build in a source directory (or any directory with a CMakeLists.txt file). Please make a build subdirectory. Feel free to remove CMakeCache.txt and CMakeFiles.")
 endif()
 
-add_git_submodule("${PROJECT_SOURCE_DIR}/dependencies/rapidjson")
 add_git_submodule("${PROJECT_SOURCE_DIR}/dependencies/hopscotch-map")
+
+set(RAPIDJSON_BUILD_DOC OFF CACHE BOOL "" FORCE)
+set(RAPIDJSON_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(RAPIDJSON_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+
+add_git_submodule("${PROJECT_SOURCE_DIR}/dependencies/rapidjson")
 
 set(MI_OVERRIDE OFF CACHE BOOL "" FORCE)
 set(MI_BUILD_TESTS OFF CACHE BOOL "" FORCE)
