@@ -32,7 +32,7 @@ make -j4
 ```
 If you are on Windows, cmake will create a `.sln` project file instead of `makefile`, that you can open in Visual Studio, or build from commandline using
 ```
-msbuild vfs.sln -m /property:Configuration=Release
+msbuild blazefs.sln -m /property:Configuration=Release
 ```
 
 For examples just look in the repository.
