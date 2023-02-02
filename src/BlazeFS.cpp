@@ -38,7 +38,7 @@ namespace blazefs {
                     m_ifsInputFile.seekg(m_headerSize + uOffset);
                     m_ifsInputFile.read(&res[0], uSize);
 
-                    vfs_ptr->insert(blazefs::internal::fs_pair(sFilePath, res));
+                    this->mkdirWrite(sFilePath, res);
                 }
             }
         }
@@ -72,7 +72,7 @@ namespace blazefs {
                     std::string res(uSize, ' ');
                     memcpy(&res[0], buf + (m_headerSize + uOffset), uSize);
 
-                    vfs_ptr->insert(blazefs::internal::fs_pair(sFilePath, res));
+                    this->mkdirWrite(sFilePath, res);
                 }
             }
         }
@@ -97,7 +97,7 @@ namespace blazefs {
         rapidjson::ParseResult res = json.Parse(headerBuf);
         if (!res) { return false; }
 
-        unpackFiles(json["files"]);
+        this->unpackFiles(json["files"]);
         m_szOffset = 0;
 
         m_ifsInputFile.close();
@@ -122,10 +122,25 @@ namespace blazefs {
         rapidjson::ParseResult res = json.Parse(headerBuf);
         if (!res) { return false; }
 
-        unpackFilesMem(json["files"], buf);
+        this->unpackFilesMem(json["files"], buf);
         m_szOffset = 0;
 
         delete[] headerBuf;
+
+        return true;
+    }
+
+    bool BlazeFS::mkdirWrite(const std::string &filename,
+                             const std::string &value) noexcept {
+
+        if (filename.empty()) return false;
+
+        auto tmp = parseMkdirPath(filename);
+
+        if (!tmp.status) return false;
+
+        auto [it, success] = tmp.ptr->try_emplace(tmp.lastElement, value);
+        if (!success) it.value() = value;
 
         return true;
     }
@@ -143,6 +158,55 @@ namespace blazefs {
         vfs_ptr->emplace(self, vfs_ptr);
         vfs_ptr->emplace(prev, vfs_ptr);
         cur_dir = vfs_ptr;
+    }
+
+    blazefs::internal::parsedPathObject
+        BlazeFS::parseMkdirPath(const std::string &path) noexcept {
+
+        blazefs::internal::parsedPathObject ret;
+
+        std::uint16_t i = 0;
+
+        if (path[0] == DIR_SEPARATOR) {
+            ++i;
+            ret.ptr = vfs_ptr;
+        } else ret.ptr = cur_dir;
+
+        std::string tmp;
+        tmp.reserve(256);
+
+        for (; i < path.length() - 1; ++i) {
+
+            tmp.push_back(path[i]);
+
+            if (path[i] == DIR_SEPARATOR) {
+
+                auto it = ret.ptr->find(tmp);
+                if (it != ret.ptr->end())
+                    ret.ptr = std::any_cast<
+                        std::shared_ptr<blazefs::internal::fs_map>>(it->second);
+                else {
+
+                    std::shared_ptr<blazefs::internal::fs_map> directory =
+                        std::make_shared<blazefs::internal::fs_map>();
+                    directory->emplace(self, directory);
+                    directory->emplace(prev, ret.ptr);
+
+                    ret.ptr->emplace(tmp, directory);
+
+                    ret.ptr = directory;
+                }
+                tmp.clear();
+            }
+        }
+
+        tmp.push_back(path[i]);
+
+        ret.lastElement = tmp;
+
+        ret.status = true;
+
+        return ret;
     }
 
     blazefs::internal::parsedPathObject

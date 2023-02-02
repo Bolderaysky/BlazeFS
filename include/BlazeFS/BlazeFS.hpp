@@ -5,7 +5,8 @@
 #include <fstream>
 
 #include "rapidjson/document.h"
-#include "rapidjson/error/en.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
 
 #include "BlazeFS/internal/types.hpp"
 
@@ -26,14 +27,20 @@ namespace blazefs {
                 std::make_shared<blazefs::internal::fs_map>();
             std::shared_ptr<blazefs::internal::fs_map> cur_dir;
 
-            // Protected methods
             void unpackFiles(rapidjson::Value &object,
                              const std::string &sPath = "/") noexcept;
+
             void unpackFilesMem(rapidjson::Value &object, std::uint8_t *buf,
                                 const std::string &sPath = "/") noexcept;
 
             blazefs::internal::parsedPathObject
                 parsePath(const std::string &path) noexcept;
+
+            blazefs::internal::parsedPathObject
+                parseMkdirPath(const std::string &path) noexcept;
+
+            bool mkdirWrite(const std::string &filename,
+                            const std::string &value) noexcept;
 
         public:
             // Default constructor

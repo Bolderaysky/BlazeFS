@@ -1,6 +1,3 @@
-[submodule "dependencies/rapidjson"]
-	path = dependencies/rapidjson
-	url = https://github.com/Tencent/rapidjson
 [submodule "dependencies/hopscotch-map"]
 	path = dependencies/hopscotch-map
 	url = https://github.com/Tessil/hopscotch-map
@@ -10,3 +7,6 @@
 [submodule "dependencies/googletest"]
 	path = dependencies/googletest
 	url = https://github.com/google/googletest
+[submodule "dependencies/rapidjson"]
+	path = dependencies/rapidjson
+	url = https://github.com/Tencent/rapidjson
