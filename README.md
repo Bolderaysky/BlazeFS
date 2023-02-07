@@ -1,5 +1,10 @@
 # BlazeFS
+[![linux-g++](https://github.com/Bolderaysky/BlazeFS/actions/workflows/linux-compilation.yml/badge.svg)](https://github.com/Bolderaysky/BlazeFS/actions/workflows/linux-compilation.yml)
+[![windows-msvc](https://github.com/Bolderaysky/BlazeFS/actions/workflows/windows-compilation.yml/badge.svg)](https://github.com/Bolderaysky/BlazeFS/actions/workflows/windows-compilation.yml)
+[![macos-clang](https://github.com/Bolderaysky/BlazeFS/actions/workflows/macos-compilation.yml/badge.svg)](https://github.com/Bolderaysky/BlazeFS/actions/workflows/macos-compilation.yml)
+
 **BlazeFS** is virtual filesystem that allows you to read, write text and binary data, store C structures, C++ classes and in fact, store anything inside virtual filesystem.
+
 ## Features
 - In-memory
 - Can be loaded from asar
