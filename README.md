@@ -102,6 +102,20 @@ Also, when we are constructing filesystem, we can pre-allocate space in `/` like
 blazefs::BlazeFS filesystem(1024);
 ```
 
+### Changing directory
+
+You can change directory by using `cd` function, like so:
+
+```cpp
+
+filesystem.createDir("/myDir/");
+filesystem.write("/myDir/file", "something");
+filesystem.exists("file"); // Returns false, because we provide relative path, and current directory is /
+filesystem.cd("/myDir/");
+filesystem.exists("file"); // Returns true, as we've changed current directory
+
+```
+
 ## Used libraries
 - [hopschotch-map](https://github.com/Tessil/hopscotch-map)
 - [mimalloc](https://github.com/microsoft/mimalloc)
