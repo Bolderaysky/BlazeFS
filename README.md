@@ -79,7 +79,7 @@ struct myStruct {
 // ...
 myStruct myStructObj;
 
-filesystem.write("file_with_string", std::string("something));
+filesystem.write("file_with_string", std::string("something"));
 filesystem.write("file_with_struct", myStructObj);
 
 filesystem.read<std::string>("file_with_string"); // OK, we wrote std::string and are reading std string
