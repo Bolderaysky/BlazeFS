@@ -55,6 +55,12 @@ filesystem.write("/test.txt", "Hello World");
 filesystem.write("./test.txt", "Hello World");
 ```
 
+If you need, you can specify second template parameter which `false` by default. When this is `true`, writing will be available only from current directory, but this allows to skip path parsing which leads to significant performance boost. Also, all data validation checks will not be used, so your code may become more unstable. Use only if you are sure that there will be only correct data provided.
+
+```cpp
+filesystem.write<std::string, true>("file_with_string", std::string("something"));
+```
+
 ### Directory creation
 
 We can create directory by using function `createDir()`:
@@ -88,6 +94,12 @@ filesystem.read<myStruct>("file_with_struct"); // OK, we wrote myStruct and are 
 filesystem.read<const char*>("file_with_string"); // std::bad_any_cast, trying to read const char* where we wrote std::string
 ```
 
+If you need, you can specify second template parameter which `false` by default. When this is `true`, reading will be available only from current directory, but this allows to skip path parsing which leads to significant performance boost. Also, all data validation checks will not be used, so your code may become more unstable. Use only if you are sure that there will be only correct data provided.
+
+```cpp
+filesystem.read<std::string, true>("file_with_string");
+```
+
 ### Reserve
 If we want to write a lot of files into one folder, we can use `reserve` to pre-allocate memory and speed-up insertion:
 ```cpp
@@ -118,7 +130,6 @@ filesystem.exists("file"); // Returns true, as we've changed current directory
 
 ## Used libraries
 - [hopschotch-map](https://github.com/Tessil/hopscotch-map)
-- [mimalloc](https://github.com/microsoft/mimalloc)
 - [rapidjson](https://rapidjson.org/) (used only for parsing asar)
 
 ## License
