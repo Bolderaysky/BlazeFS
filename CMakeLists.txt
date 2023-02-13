@@ -30,10 +30,7 @@ set(RAPIDJSON_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 
 add_git_submodule("${PROJECT_SOURCE_DIR}/dependencies/rapidjson")
 
-set(MI_OVERRIDE OFF CACHE BOOL "" FORCE)
-set(MI_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-
-add_git_submodule("${PROJECT_SOURCE_DIR}/dependencies/mimalloc")
+add_git_submodule("${PROJECT_SOURCE_DIR}/dependencies/glaze")
 
 if (UNIX)
         if (CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -64,10 +61,9 @@ endif()
 include_directories($CACHE{INCLUDE_PATH})
 
 add_library(BlazeFS "$CACHE{SOURCE_PATH}/BlazeFS.cpp")
-target_link_libraries(BlazeFS PUBLIC mimalloc)
 include_directories("${PROJECT_SOURCE_DIR}/dependencies/rapidjson/include")
 include_directories("${PROJECT_SOURCE_DIR}/dependencies/hopscotch-map/include")
-include_directories("${PROJECT_SOURCE_DIR}/dependencies/mimalloc/include")
+include_directories("${PROJECT_SOURCE_DIR}/dependencies/glaze/include")
 
 if (BUILD_EXAMPLES)
         add_executable(example_write_read_file "$CACHE{EXAMPLES_PATH}/main.cpp")
