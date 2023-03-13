@@ -1,11 +1,11 @@
 #include <string>
 #include "gtest/gtest.h"
-#include "BlazeFS/BlazeFS.hpp"
+#include "blaze/BlazeFS/BlazeFS.hpp"
 
 
 TEST(createDirTest, createDirTest) {
 
-    blazefs::BlazeFS filesystem;
+    blaze::BlazeFS filesystem;
 
     ASSERT_EQ(true, filesystem.createDir("/dir/"));
     ASSERT_EQ(true, filesystem.createDir("dir1/"));

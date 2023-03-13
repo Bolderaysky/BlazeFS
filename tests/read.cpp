@@ -1,11 +1,11 @@
 #include <string>
 #include "gtest/gtest.h"
-#include "BlazeFS/BlazeFS.hpp"
+#include "blaze/BlazeFS/BlazeFS.hpp"
 
 
 TEST(readTest, readTest) {
 
-    blazefs::BlazeFS filesystem;
+    blaze::BlazeFS filesystem;
     filesystem.write("/test_file", std::string("some data"));
 
     ASSERT_EQ("some data", filesystem.read<std::string>("/test_file"));

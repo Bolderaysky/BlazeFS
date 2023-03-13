@@ -9,9 +9,9 @@
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 
-#include "BlazeFS/internal/types.hpp"
+#include "blaze/BlazeFS/internal/types.hpp"
 
-namespace blazefs {
+namespace blaze {
 
     class BlazeFS {
 
@@ -24,9 +24,9 @@ namespace blazefs {
 
             std::ifstream m_ifsInputFile;
 
-            std::shared_ptr<blazefs::internal::fs_map> vfs_ptr =
-                std::make_shared<blazefs::internal::fs_map>();
-            std::shared_ptr<blazefs::internal::fs_map> cur_dir;
+            std::shared_ptr<blaze::internal::fs_map> vfs_ptr =
+                std::make_shared<blaze::internal::fs_map>();
+            std::shared_ptr<blaze::internal::fs_map> cur_dir;
 
             void unpackFiles(rapidjson::Value &object,
                              const std::string &sPath = "/") noexcept;
@@ -34,10 +34,10 @@ namespace blazefs {
             void unpackFilesMem(rapidjson::Value &object, std::uint8_t *buf,
                                 const std::string &sPath = "/") noexcept;
 
-            blazefs::internal::parsedPathObject
+            blaze::internal::parsedPathObject
                 parsePath(const std::string &path) noexcept;
 
-            blazefs::internal::parsedPathObject
+            blaze::internal::parsedPathObject
                 parseMkdirPath(const std::string &path) noexcept;
 
             bool mkdirWrite(const std::string &filename,
@@ -139,4 +139,4 @@ namespace blazefs {
         }
     }
 
-}; // namespace blazefs
+}; // namespace blaze

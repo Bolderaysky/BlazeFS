@@ -1,11 +1,11 @@
 #include <string>
 #include "gtest/gtest.h"
-#include "BlazeFS/BlazeFS.hpp"
+#include "blaze/BlazeFS/BlazeFS.hpp"
 
 
 TEST(reserveTest, reserveTest) {
 
-    blazefs::BlazeFS filesystem;
+    blaze::BlazeFS filesystem;
 
     filesystem.createDir("/dir/");
 
