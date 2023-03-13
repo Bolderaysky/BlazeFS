@@ -35,7 +35,7 @@ void func() {
     std::cout << "";
 }
 
-int main(int argc, const char *argv[]) {
+int main(int, char **) {
 
     blaze::BlazeFS filesystem;
 
