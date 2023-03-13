@@ -34,7 +34,7 @@ add_git_submodule("${PROJECT_SOURCE_DIR}/dependencies/glaze")
 
 if (UNIX)
         if (CMAKE_BUILD_TYPE STREQUAL "Release")
-        add_compile_options(-Ofast -fno-exceptions -fno-builtin-malloc)
+        add_compile_options(-Ofast -fno-exceptions)
         endif()
 endif()
 
