@@ -1,9 +1,6 @@
 [submodule "dependencies/hopscotch-map"]
 	path = dependencies/hopscotch-map
 	url = https://github.com/Tessil/hopscotch-map
-[submodule "dependencies/mimalloc"]
-	path = dependencies/mimalloc
-	url = https://github.com/microsoft/mimalloc
 [submodule "dependencies/googletest"]
 	path = dependencies/googletest
 	url = https://github.com/google/googletest

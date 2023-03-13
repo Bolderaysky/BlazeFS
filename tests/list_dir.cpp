@@ -1,7 +1,7 @@
 #include <string>
 #include <vector>
 #include "gtest/gtest.h"
-#include "BlazeFS/BlazeFS.hpp"
+#include "blaze/BlazeFS/BlazeFS.hpp"
 
 
 TEST(listDirTest, listDirTest) {
@@ -15,7 +15,7 @@ TEST(listDirTest, listDirTest) {
     vec.emplace_back("dir1/");
     vec.emplace_back("dir2/");
 
-    blazefs::BlazeFS filesystem;
+    blaze::BlazeFS filesystem;
 
     filesystem.createDir("/dir/");
     filesystem.createDir("dir/dir1/");

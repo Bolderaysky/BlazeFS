@@ -1,10 +1,11 @@
 #include <iostream>
-#include "BlazeFS/BlazeFS.hpp"
+#include "blaze/BlazeFS/BlazeFS.hpp"
+
 
 int main() {
 
     // Creating filesystem object
-    blazefs::BlazeFS filesystem;
+    blaze::BlazeFS filesystem;
 
     // String that we will write to the file
     std::string myStr = "Hello World from Virtual filesystem!";

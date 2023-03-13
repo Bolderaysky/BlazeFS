@@ -1,13 +1,13 @@
-#include "BlazeFS/BlazeFS.hpp"
+#include "blaze/BlazeFS/BlazeFS.hpp"
 
-#include "mimalloc-new-delete.h"
+// #include "glaze/glaze.hpp"
 
 #define DIR_SEPARATOR '/'
 
 inline constexpr auto self = "./";
 inline constexpr auto prev = "../";
 
-namespace blazefs {
+namespace blaze {
 
 
     void BlazeFS::unpackFiles(rapidjson::Value &object,
@@ -123,6 +123,7 @@ namespace blazefs {
         if (!res) { return false; }
 
         this->unpackFilesMem(json["files"], buf);
+
         m_szOffset = 0;
 
         delete[] headerBuf;
@@ -160,10 +161,10 @@ namespace blazefs {
         cur_dir = vfs_ptr;
     }
 
-    blazefs::internal::parsedPathObject
+    blaze::internal::parsedPathObject
         BlazeFS::parseMkdirPath(const std::string &path) noexcept {
 
-        blazefs::internal::parsedPathObject ret;
+        blaze::internal::parsedPathObject ret;
 
         std::uint16_t i = 0;
 
@@ -183,12 +184,13 @@ namespace blazefs {
 
                 auto it = ret.ptr->find(tmp);
                 if (it != ret.ptr->end())
-                    ret.ptr = std::any_cast<
-                        std::shared_ptr<blazefs::internal::fs_map>>(it->second);
+                    ret.ptr =
+                        std::any_cast<std::shared_ptr<blaze::internal::fs_map>>(
+                            it->second);
                 else {
 
-                    std::shared_ptr<blazefs::internal::fs_map> directory =
-                        std::make_shared<blazefs::internal::fs_map>();
+                    std::shared_ptr<blaze::internal::fs_map> directory =
+                        std::make_shared<blaze::internal::fs_map>();
                     directory->emplace(self, directory);
                     directory->emplace(prev, ret.ptr);
 
@@ -209,10 +211,10 @@ namespace blazefs {
         return ret;
     }
 
-    blazefs::internal::parsedPathObject
+    blaze::internal::parsedPathObject
         BlazeFS::parsePath(const std::string &path) noexcept {
 
-        blazefs::internal::parsedPathObject ret;
+        blaze::internal::parsedPathObject ret;
 
         std::uint16_t i = 0;
 
@@ -232,8 +234,9 @@ namespace blazefs {
 
                 auto it = ret.ptr->find(tmp);
                 if (it != ret.ptr->end())
-                    ret.ptr = std::any_cast<
-                        std::shared_ptr<blazefs::internal::fs_map>>(it->second);
+                    ret.ptr =
+                        std::any_cast<std::shared_ptr<blaze::internal::fs_map>>(
+                            it->second);
                 else {
 
                     ret.status = false;
@@ -299,7 +302,7 @@ namespace blazefs {
         auto it = tmp.ptr->find(tmp.lastElement);
         if (it == tmp.ptr->end()) return false;
 
-        cur_dir = std::any_cast<std::shared_ptr<blazefs::internal::fs_map>>(
+        cur_dir = std::any_cast<std::shared_ptr<blaze::internal::fs_map>>(
             it->second);
 
         return true;
@@ -317,8 +320,8 @@ namespace blazefs {
 
         if (tmp.ptr->contains(tmp.lastElement)) return false;
 
-        std::shared_ptr<blazefs::internal::fs_map> directory =
-            std::make_shared<blazefs::internal::fs_map>();
+        std::shared_ptr<blaze::internal::fs_map> directory =
+            std::make_shared<blaze::internal::fs_map>();
         directory->emplace(self, directory);
         directory->emplace(prev, tmp.ptr);
 
@@ -332,15 +335,19 @@ namespace blazefs {
 
         if (dirname.empty()) return {};
 
-        auto tmp = this->parsePath(dirname);
+        blaze::internal::parsedPathObject tmp;
+        if (dirname != "/") {
 
-        if (!tmp.status) return {};
+            tmp = this->parsePath(dirname);
 
-        auto it = tmp.ptr->find(tmp.lastElement);
-        if (it == tmp.ptr->end()) return {};
+            if (!tmp.status) return {};
 
-        tmp.ptr = std::any_cast<std::shared_ptr<blazefs::internal::fs_map>>(
-            it->second);
+            auto it = tmp.ptr->find(tmp.lastElement);
+            if (it == tmp.ptr->end()) return {};
+
+            tmp.ptr = std::any_cast<std::shared_ptr<blaze::internal::fs_map>>(
+                it->second);
+        } else tmp.ptr = vfs_ptr;
 
         auto ret = std::make_unique<std::vector<std::string>>();
         ret->reserve(2048);
@@ -371,7 +378,7 @@ namespace blazefs {
 
         tmp_from.ptr->emplace(
             tmp_from.lastElement,
-            std::any_cast<std::shared_ptr<blazefs::internal::fs_map>>(
+            std::any_cast<std::shared_ptr<blaze::internal::fs_map>>(
                 it_to->second));
 
         return true;
@@ -415,8 +422,8 @@ namespace blazefs {
         if (tmp.lastElement[tmp.lastElement.length() - 1] != DIR_SEPARATOR)
             return false;
 
-        std::any_cast<std::shared_ptr<blazefs::internal::fs_map>>(it->second)
+        std::any_cast<std::shared_ptr<blaze::internal::fs_map>>(it->second)
             ->reserve(size);
         return true;
     }
-}; // namespace blazefs
+}; // namespace blaze

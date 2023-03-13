@@ -6,7 +6,7 @@
 
 #include "tsl/bhopscotch_map.h"
 
-namespace blazefs {
+namespace blaze {
 
     namespace internal {
 
@@ -23,4 +23,4 @@ namespace blazefs {
 
     }; // namespace internal
 
-}; // namespace blazefs
+}; // namespace blaze
