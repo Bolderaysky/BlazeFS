@@ -7,6 +7,3 @@
 [submodule "dependencies/rapidjson"]
 	path = dependencies/rapidjson
 	url = https://github.com/Tencent/rapidjson
-[submodule "dependencies/glaze"]
-	path = dependencies/glaze
-	url = https://github.com/stephenberry/glaze
