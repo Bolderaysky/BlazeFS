@@ -30,7 +30,7 @@ mkdir build && cd build
 cmake ..
 make -j4
 ```
-If you are on Windows, cmake will create a `.sln` project file instead of `makefile`, that you can open in Visual Studio, or build from commandline using
+If you are on Windows, cmake will create a `.sln` project file instead of `makefile`, that you can open in Visual Studio, or build from command line using
 ```
 msbuild blazefs.sln -m /property:Configuration=Release
 ```
