@@ -123,6 +123,7 @@ namespace blaze {
         if (!res) { return false; }
 
         this->unpackFilesMem(json["files"], buf);
+
         m_szOffset = 0;
 
         delete[] headerBuf;
